@@ -1,0 +1,544 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clothing Store Catalog Management</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #f5f1f7;
+    color: #333;
+}
+
+header {
+    background: linear-gradient(120deg, #6c3483, #c06caa);
+    color: white;
+    text-align: center;
+    padding: 25px;
+}
+
+header h1 {
+    margin-bottom: 8px;
+}
+
+.container {
+    max-width: 1150px;
+    margin: 25px auto;
+    padding: 20px;
+}
+
+.card {
+    background: white;
+    padding: 22px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px #00000012;
+    margin-bottom: 25px;
+}
+
+h2 {
+    color: #6c3483;
+    margin-bottom: 18px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+input, select {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin-top: 6px;
+}
+
+label {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.checkbox input {
+    width: auto;
+}
+
+button {
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: white;
+    background: #8e44ad;
+    margin: 5px 3px;
+}
+
+button:hover {
+    opacity: 0.85;
+}
+
+.add-btn {
+    background: #6c3483;
+    margin-top: 18px;
+}
+
+.edit-btn {
+    background: #2980b9;
+}
+
+.delete-btn {
+    background: #e74c3c;
+}
+
+.clear-btn {
+    background: #555;
+}
+
+.filters {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 850px;
+}
+
+th {
+    background: #6c3483;
+    color: white;
+}
+
+th, td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+tr:nth-child(even) {
+    background: #f8f2fa;
+}
+
+.badge {
+    background: #f39c12;
+    color: white;
+    padding: 5px 8px;
+    border-radius: 5px;
+    font-size: 12px;
+}
+
+.discount {
+    color: #198754;
+    font-weight: bold;
+}
+
+.old-price {
+    text-decoration: line-through;
+    color: #888;
+}
+
+@media(max-width: 700px) {
+    .form-grid, .filters {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Clothing Store Catalog Management</h1>
+    <p>Manage Products, Stock and Clearance Sales</p>
+</header>
+
+<div class="container">
+
+    <div class="card">
+        <h2 id="formTitle">Add New Product</h2>
+
+        <form id="productForm">
+
+            <div class="form-grid">
+
+                <div>
+                    <label>Product Name</label>
+                    <input type="text" id="name" placeholder="Enter product name" required>
+                </div>
+
+                <div>
+                    <label>Category</label>
+                    <select id="category" required>
+                        <option value="">Select Category</option>
+                        <option>Men</option>
+                        <option>Women</option>
+                        <option>Kids</option>
+                        <option>Footwear</option>
+                        <option>Accessories</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Size</label>
+                    <select id="size" required>
+                        <option value="">Select Size</option>
+                        <option>XS</option>
+                        <option>S</option>
+                        <option>M</option>
+                        <option>L</option>
+                        <option>XL</option>
+                        <option>XXL</option>
+                        <option>Free Size</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Color</label>
+                    <input type="text" id="color" placeholder="Enter color" required>
+                </div>
+
+                <div>
+                    <label>Price (₹)</label>
+                    <input type="number" id="price" min="0.01"
+                           step="0.01" placeholder="Enter price" required>
+                </div>
+
+                <div>
+                    <label>Stock Quantity</label>
+                    <input type="number" id="stock" min="0"
+                           step="1" placeholder="Enter stock" required>
+                </div>
+
+            </div>
+
+            <div class="checkbox">
+                <input type="checkbox" id="clearance">
+                <label for="clearance">Mark as Clearance Sale Item (20% OFF)</label>
+            </div>
+
+            <button type="submit" class="add-btn" id="submitBtn">
+                Add Product
+            </button>
+
+            <button type="button" class="clear-btn" onclick="resetForm()">
+                Clear
+            </button>
+
+        </form>
+    </div>
+
+    <div class="card">
+        <h2>Search and Filter Products</h2>
+
+        <div class="filters">
+
+            <input type="text" id="search"
+                   placeholder="Search product name...">
+
+            <select id="filterCategory">
+                <option value="">All Categories</option>
+                <option>Men</option>
+                <option>Women</option>
+                <option>Kids</option>
+                <option>Footwear</option>
+                <option>Accessories</option>
+            </select>
+
+            <select id="filterSize">
+                <option value="">All Sizes</option>
+                <option>XS</option>
+                <option>S</option>
+                <option>M</option>
+                <option>L</option>
+                <option>XL</option>
+                <option>XXL</option>
+                <option>Free Size</option>
+            </select>
+
+            <input type="text" id="filterColor"
+                   placeholder="Filter by color">
+        </div>
+
+        <div class="filters">
+            <input type="number" id="minPrice"
+                   placeholder="Minimum price" min="0">
+
+            <input type="number" id="maxPrice"
+                   placeholder="Maximum price" min="0">
+        </div>
+
+        <button onclick="displayProducts()">Apply Filters</button>
+        <button class="clear-btn" onclick="clearFilters()">Clear Filters</button>
+    </div>
+
+    <div class="card">
+        <h2>Product Catalog</h2>
+
+        <p id="totalProducts">Total Products: 0</p>
+
+        <br>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Size</th>
+                        <th>Color</th>
+                        <th>Original Price</th>
+                        <th>Selling Price</th>
+                        <th>Stock</th>
+                        <th>Clearance</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody id="productTable"></tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+let products = JSON.parse(localStorage.getItem("clothingProducts")) || [];
+
+let editIndex = -1;
+
+const form = document.getElementById("productForm");
+
+function saveProducts() {
+    localStorage.setItem("clothingProducts", JSON.stringify(products));
+}
+
+form.addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    const name = document.getElementById("name").value.trim();
+    const category = document.getElementById("category").value;
+    const size = document.getElementById("size").value;
+    const color = document.getElementById("color").value.trim();
+    const price = Number(document.getElementById("price").value);
+    const stock = Number(document.getElementById("stock").value);
+    const clearance = document.getElementById("clearance").checked;
+
+    if (!name || !category || !size || !color ||
+        !Number.isFinite(price) || price <= 0 ||
+        !Number.isInteger(stock) || stock < 0) {
+        alert("Please enter valid product details.");
+        return;
+    }
+
+    const product = {
+        name,
+        category,
+        size,
+        color,
+        price,
+        stock,
+        clearance
+    };
+
+    if (editIndex === -1) {
+        products.push(product);
+        alert("Product Added Successfully!");
+    } else {
+        products[editIndex] = product;
+        alert("Product Updated Successfully!");
+    }
+
+    saveProducts();
+    resetForm();
+    displayProducts();
+
+});
+
+function displayProducts() {
+
+    const table = document.getElementById("productTable");
+    table.innerHTML = "";
+
+    const search = document.getElementById("search").value.toLowerCase();
+    const category = document.getElementById("filterCategory").value;
+    const size = document.getElementById("filterSize").value;
+    const color = document.getElementById("filterColor").value.toLowerCase();
+
+    const minValue = document.getElementById("minPrice").value;
+    const maxValue = document.getElementById("maxPrice").value;
+
+    const min = minValue === "" ? null : Number(minValue);
+    const max = maxValue === "" ? null : Number(maxValue);
+
+    const filtered = products
+        .map((product, index) => ({ product, index }))
+        .filter(({product: p}) => {
+
+            return p.name.toLowerCase().includes(search) &&
+                   (!category || p.category === category) &&
+                   (!size || p.size === size) &&
+                   p.color.toLowerCase().includes(color) &&
+                   (min === null || p.price >= min) &&
+                   (max === null || p.price <= max);
+
+        });
+
+    filtered.forEach(({product: p, index}) => {
+
+        const sellingPrice = p.clearance
+            ? p.price * 0.80
+            : p.price;
+
+        const row = document.createElement("tr");
+
+        const values = [
+            p.name,
+            p.category,
+            p.size,
+            p.color,
+            "₹" + p.price.toFixed(2),
+            "₹" + sellingPrice.toFixed(2),
+            p.stock,
+            p.clearance ? "Yes - 20% OFF" : "No"
+        ];
+
+        values.forEach((value, i) => {
+            const cell = document.createElement("td");
+
+            if (i === 4 && p.clearance) {
+                cell.innerHTML = '<span class="old-price"></span>';
+                cell.firstChild.textContent = value;
+            } else {
+                cell.textContent = value;
+            }
+
+            if (i === 5 && p.clearance) {
+                cell.className = "discount";
+            }
+
+            if (i === 7 && p.clearance) {
+                cell.innerHTML = '<span class="badge">CLEARANCE</span>';
+            }
+
+            row.appendChild(cell);
+        });
+
+        const actions = document.createElement("td");
+
+        const editButton = document.createElement("button");
+        editButton.textContent = "Edit";
+        editButton.className = "edit-btn";
+        editButton.addEventListener("click", () => editProduct(index));
+
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "Delete";
+        deleteButton.className = "delete-btn";
+        deleteButton.addEventListener("click", () => deleteProduct(index));
+
+        actions.appendChild(editButton);
+        actions.appendChild(deleteButton);
+        row.appendChild(actions);
+
+        table.appendChild(row);
+
+    });
+
+    document.getElementById("totalProducts").textContent =
+        "Total Products: " + products.length +
+        " | Matching Products: " + filtered.length;
+
+}
+
+function editProduct(index) {
+
+    const p = products[index];
+
+    document.getElementById("name").value = p.name;
+    document.getElementById("category").value = p.category;
+    document.getElementById("size").value = p.size;
+    document.getElementById("color").value = p.color;
+    document.getElementById("price").value = p.price;
+    document.getElementById("stock").value = p.stock;
+    document.getElementById("clearance").checked = p.clearance;
+
+    editIndex = index;
+
+    document.getElementById("formTitle").textContent = "Edit Product";
+    document.getElementById("submitBtn").textContent = "Update Product";
+
+    window.scrollTo({top: 0, behavior: "smooth"});
+
+}
+
+function deleteProduct(index) {
+
+    if (confirm("Are you sure you want to delete this product?")) {
+
+        products.splice(index, 1);
+
+        saveProducts();
+        displayProducts();
+
+        alert("Product Deleted Successfully!");
+
+        if (editIndex === index) {
+            resetForm();
+        }
+    }
+
+}
+
+function resetForm() {
+
+    form.reset();
+    editIndex = -1;
+
+    document.getElementById("formTitle").textContent = "Add New Product";
+    document.getElementById("submitBtn").textContent = "Add Product";
+
+}
+
+function clearFilters() {
+
+    document.getElementById("search").value = "";
+    document.getElementById("filterCategory").value = "";
+    document.getElementById("filterSize").value = "";
+    document.getElementById("filterColor").value = "";
+    document.getElementById("minPrice").value = "";
+    document.getElementById("maxPrice").value = "";
+
+    displayProducts();
+
+}
+
+displayProducts();
+
+</script>
+
+</body>
+</html>
